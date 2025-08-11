@@ -54,6 +54,9 @@ class MProduct extends CI_Model {
         if(isset($params["search"]))  {
             $this->db->like("name", $params["search"]);
         }
+        if(isset($params["no_pro_id"]))  {
+            $this->db->where("id !=", $params["no_pro_id"]);
+        }
         if(isset($params["category_id"]))  {
             $this->db->where("category_id", $params["category_id"]);
         }

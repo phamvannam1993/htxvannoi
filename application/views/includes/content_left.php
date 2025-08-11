@@ -99,7 +99,7 @@
             <div class="col-xs-12">
                 Bao bì carton, thùng carton
                 <a href="http://baobianphat.com" target="_blank" title="thùng carton, bao bì carton">
-                <img width="100%" src="/Anh/anh quang cao/bao bi an phat.jpg" alt="thùng carton, bao bì carton"/>
+                <img width="100%" src="/assets/images/bao bi an phat.jpg" alt="thùng carton, bao bì carton"/>
                 </a>
             </div>
             </div>

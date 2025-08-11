@@ -189,4 +189,19 @@ class Home extends CI_Controller
         $data['blogs'] =  $this->blogs;
         $this->load->view('front-end/blog_detail',$data);
     }
+
+    public function productDetail($slug) {
+        $data['setting'] =  $this->setting;
+        $data['sliders'] =  $this->sliders;
+        $data['categories'] = $this->categories;
+        $product = $this->MProduct->getOneBy(['slug' => $slug]);
+        if(empty($product)) {
+            return redirect('/');
+        }
+        $data['product'] =  $product;
+        $data['products'] =  $this->MProduct->get(['category_id' => $product->category_id, 'no_pro_id' => $product->id]);
+        $data['blogs'] =  $this->blogs;
+        $this->load->view('front-end/product_detail',$data);
+    }
+    
 }

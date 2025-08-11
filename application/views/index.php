@@ -52,7 +52,7 @@
                                        </div>
                                     </div>
                                     <div class="photo" >
-                                       <a href="chitietsp/id=bapcai01">
+                                       <a href="/san-pham/<?=$product['slug']?>">
                                           <img src="/<?=$product['image_url']?>" class="img-fluid" alt="a"/></a>
                                     </div>
                                     <div class="info">
