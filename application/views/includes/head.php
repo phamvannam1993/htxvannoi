@@ -2,13 +2,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>
-        Rau ăn lá
-        Organic Mart			
+        <?=$title?>
     </title>
     <!-- ================= Page description ================== -->
     <meta name="description" content="">
     <!-- ================= Meta ================== -->
-    <meta name="keywords" content="Rau ăn lá, Organic Mart, organicmart.com.vn"/>
+    <meta name="keywords" content="<?=$title?>">
     <link rel="canonical" href="https://organicmart.com.vn/rau-an-la"/>
     <meta name='revisit-after' content='1 days' />
     <meta name="robots" content="noodp,index,follow" />

@@ -40,6 +40,7 @@ class Home extends CI_Controller
     }
 
     public function index(){
+        $data['title'] = 'Organic Mart';
         $data['products'] = $this->MProduct->get(['limit' => 10, 'offset' => 0]);
         $data['sliders'] =  $this->sliders;
         $data['setting'] =  $this->setting;
@@ -143,10 +144,12 @@ class Home extends CI_Controller
             $limit = $this->input->get('limit') ? $this->input->get('limit') : 12; // số mục mỗi trang
             $category_ids = [];
             $data['query'] = $search;
+            $data['title'] = 'Tìm kiếm sản phẩm';
             $data = $this->getListProduct($data, $page, $limit, $category_ids, $search);
             $this->load->view('front-end/search_product', $data);
         } else if(!empty($category)) {
             $data['category'] = $category;
+            $data['title'] = $category->name;
             $page = $this->input->get('page') ? $this->input->get('page') : 1; 
             $search = $this->input->get('search') ? $this->input->get('search') : ""; 
             $limit = $this->input->get('limit') ? $this->input->get('limit') : 12; // số mục mỗi trang
@@ -160,6 +163,7 @@ class Home extends CI_Controller
             $this->load->view('front-end/category_detail', $data);
         } else {
             $product = $this->MProduct->getOneBy(['slug' => $slug]);
+            $data['title'] = $product->name;
             $category = $this->MCategory->getOneBy(['category_id' => $product->category_id]);
             $cates = $this->MCategory->get(['parent_id' => $category->id], 'ASC');
             $category_ids[] = $product->category_id;
