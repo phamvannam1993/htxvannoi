@@ -57,8 +57,7 @@ $route['blogs'] = 'Home/blog';
 $route['huong-dan-mua-hang'] = 'Home/buyingGuide';
 $route['gioi-thieu'] = 'Home/introduce';
 
-$route['san-pham/(:any)'] = 'Home/productDetail/$1';
-$route['danh-muc/(:any)'] = 'Home/categoryDetail/$1';
+$route['(:any)'] = 'Home/detail/$1';
 
 $route['tin-tuc/(:any)'] = 'Home/blogDetail/$1';
 

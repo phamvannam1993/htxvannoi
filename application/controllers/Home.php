@@ -30,7 +30,11 @@ class Home extends CI_Controller
         $this->load->model(['MAdmin', 'MProduct', 'MSlider','MCategory', 'MBlog', 'MSetting']);
         $this->load->helper(['url', 'func_helper', 'images']);
         $this->sliders = $this->MSlider->get();
-        $this->categories = $this->MCategory->get();
+        $categories = $this->MCategory->get(['parent_id' => 0], 'ASC');
+        for($i = 0; $i < count($categories); $i++) {
+            $categories[$i]['items'] = $this->MCategory->get(['parent_id' => $categories[$i]['id']], 'ASC');
+        }
+        $this->categories = $categories;
         $this->setting = $this->MSetting->getOneBy();
         $this->blogs = $this->MBlog->get();
     }
@@ -39,19 +43,28 @@ class Home extends CI_Controller
         $data['products'] = $this->MProduct->get(['limit' => 10, 'offset' => 0]);
         $data['sliders'] =  $this->sliders;
         $data['setting'] =  $this->setting;
-        $data['categories'] =  $this->categories;
-        $data['blogs'] =  $this->blogs;
-        $cateProducts = [];
+        $data['categories'] = $this->categories;
+        $caProducts = [];
         foreach($this->categories as $category) {
-            if($category['type'] == 2) {
-                $products = $this->MProduct->get(['category_id' => $category['id'], 'limit' => 6, 'offset' => 0]);
-                $cateProducts[] = [
-                    'category' => $category,
-                    'products' => $products
-                ];
+            $cateIds = [];
+            if(count($caProducts) < 3) {
+                $cateIds[] = $category['id'];
+                if(!empty($category['items'])) {
+                    foreach($category['items'] as $item) {
+                        $cateIds[] = $item['id'];
+                    }
+                }
+                $products = $this->MProduct->get(['limit' => 18, 'offset' => 0, 'category_ids' => $cateIds]);
+                if(!empty($products)) {
+                    $caProducts[] = [
+                        'category' => $category,
+                        'products' => $products
+                    ];
+                }
             }
         }
-        $data['cateProducts'] = $cateProducts;
+        $data['caProducts'] =  $caProducts;
+        $data['blogs'] =  $this->blogs;
         $this->load->view('index',$data);
     }
 
@@ -120,21 +133,109 @@ class Home extends CI_Controller
     }
 
     public function detail($slug){
-        $product = $this->MProduct->getOneBy(['slug' => $slug]);
-        if($product) {
-            $data['product'] = $product;
-            $data['products'] = $this->MProduct->get(['limit' => 4, 'offset' => 0, 'not_pro_id' => $product->id]);
-            $this->load->view('front-end/product_detail',$data);
+        $data['sliders'] =  $this->sliders;
+        $data['setting'] =  $this->setting;
+        $data['categories'] =  $this->categories;
+        $category = $this->MCategory->getOneBy(['slug' => $slug]);
+        if($slug == 'search') {
+            $page = $this->input->get('page') ? $this->input->get('page') : 1; 
+            $search = $this->input->get('query') ? $this->input->get('query') : ""; 
+            $limit = $this->input->get('limit') ? $this->input->get('limit') : 12; // số mục mỗi trang
+            $category_ids = [];
+            $data['query'] = $search;
+            $data = $this->getListProduct($data, $page, $limit, $category_ids, $search);
+            $this->load->view('front-end/search_product', $data);
+        } else if(!empty($category)) {
+            $data['category'] = $category;
+            $page = $this->input->get('page') ? $this->input->get('page') : 1; 
+            $search = $this->input->get('search') ? $this->input->get('search') : ""; 
+            $limit = $this->input->get('limit') ? $this->input->get('limit') : 12; // số mục mỗi trang
+            $category_ids[] = $category->id;
+            $cates = $this->MCategory->get(['parent_id' => $category->id], 'ASC');
+            foreach($cates as $cate) {
+                $category_ids[] =  $cate['id'];
+            }
+          
+            $data = $this->getListProduct($data, $page, $limit, $category_ids, $search);
+            $this->load->view('front-end/category_detail', $data);
         } else {
-            $blog = $this->MBlog->getOneBy(['slug' => $slug]);
-            $data['blog'] = $blog;
-            if($blog) {
-                $data['blogs'] = $this->MBlog->get(['limit' => 3, 'offset' => 0, 'not_blog_id' => $blog->id]);
-                $this->load->view('front-end/blog_detail',$data);
+            $product = $this->MProduct->getOneBy(['slug' => $slug]);
+            $category = $this->MCategory->getOneBy(['category_id' => $product->category_id]);
+            $cates = $this->MCategory->get(['parent_id' => $category->id], 'ASC');
+            $category_ids[] = $product->category_id;
+            foreach($cates as $cate) {
+                $category_ids[] =  $cate['id'];
+            }
+            if(!empty($product)) {
+                $data['product'] = $product;
+                $data['category'] = $category;
+                $data['products'] = $this->MProduct->get(['limit' => 10, 'offset' => 0, 'not_pro_id' => $product->id, 'category_ids' => $category_ids]);
+                $this->load->view('front-end/product_detail',$data);
             } else {
-                redirect('/');
-            } 
+                $this->load->view('front-end/page_404',$data);
+            }
+        } 
+    }
+
+    public function getListProduct($data, $page, $limit, $category_ids = [], $search = "") {
+        $total = $this->MProduct->count_all(['search' => $search, 'category_ids' => $category_ids]); 
+        $perPage = $limit;
+        $totalPage = ceil($total / $perPage);
+
+        // Tính vị trí mục đầu và cuối trên trang hiện tại
+        $firstItem = ($page - 1) * $perPage + 1;
+        $lastItem = min($firstItem + $perPage - 1, $total);
+
+        // Tạo URL phân trang
+        function pageUrlProduct($p, $search) {
+            return '?page=' . $p. '&query='.$search;
         }
+        $offset = ($page - 1) * $perPage;
+        $products = $this->MProduct->get(['limit' => $perPage, 'offset' => $offset, 'search' => $search, 'category_ids' => $category_ids]);
+        $previousPageUrl = $page > 1 ? pageUrlProduct($page - 1, $search) : null;
+        $nextPageUrl = $page < $totalPage ? pageUrlProduct($page + 1, $search) : null;
+
+        // Tạo danh sách trang sẽ hiển thị
+        $pagesToShow = [];
+
+        if ($totalPage <= 5) {
+            // Nếu <= 5 trang thì hiển thị hết
+            for ($i = 1; $i <= $totalPage; $i++) {
+                $pagesToShow[] = $i;
+            }
+        } else {
+            // Luôn hiển thị trang 1
+            $pagesToShow[] = 1;
+
+            // Các trang ở giữa
+            $start = max(2, $page - 1);
+            $end = min($totalPage - 1, $page + 1);
+
+            if ($start > 2) {
+                $pagesToShow[] = '...';
+            }
+
+            for ($i = $start; $i <= $end; $i++) {
+                $pagesToShow[] = $i;
+            }
+
+            if ($end < $totalPage - 1) {
+                $pagesToShow[] = '...';
+            }
+            // Luôn hiển thị trang cuối
+            $pagesToShow[] = $totalPage;
+        }
+        $data['datas'] = $products;
+        $data['lastItem'] = $lastItem;
+        $data['page'] = $page;
+        $data['pagesToShow'] = $pagesToShow; 
+        $data['perPage'] = $perPage;
+        $data['totalPage'] = $totalPage;
+        $data['total'] = $total; 
+        $data['firstItem'] = $firstItem;
+        $data['nextPageUrl'] = $nextPageUrl;
+        $data['previousPageUrl'] = $previousPageUrl;
+        return $data;
     }
 
     public function categoryDetail($slug) {

@@ -1,106 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
-   <?php $this->load->view('includes/head')?>
+<html lang="vi">
+<?php $this->load->view('includes/head')?>
    <body>
-      <!-- Navigation -->
-      <?php $this->load->view('includes/nav')?>
-      <!-- Page Content -->
+      <div class="fffmb hidden">
+      </div>
+      <!-- Main content -->
+      <?php $this->load->view('includes/header')?>
+      <section class="bread_crumb py-4">
+         <div class="container">
+            <div class="row">
+               <div class="col-xs-12">
+                  <ul class="breadcrumb" >
+                     <li class="home">
+                        <a  href="/" ><span >Trang chủ</span></a>						
+                        <span> <i class="fa fa-angle-right"></i> </span>
+                     </li>
+                     <li><strong ><span ><?=$category->name?></span></strong></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </section>
       <div class="container">
          <div class="row">
-            <?php $this->load->view('includes/content_left')?>
-            <div class="col-md-9">
-               <?php $this->load->view('includes/slider')?>
-               <script src="/scripts/bootstrap3-showmanyslideonecarousel.js"></script>
-               <style>
-                  .carousel-inner img {width: 100%; max-height: 250px;}
-                  /* Carousel Header Styles */
-                  .header-text {
-                  position: absolute;
-                  top: 55%;
-                  left: 1.8%;
-                  right: auto;
-                  width: 96.66666666666666%;
-                  color: #e2e2e2;
-                  font-size:20px; letter-spacing:1px;
-                  }
-                  .header-text h2 {font-size: 35px; color:#fff; font-weight:600;}
-                  .header-text h2 span {padding: 10px;color:orange;}
-                  .header-text h3 span {padding: 15px;}
-               </style>
-               <div class="container-fluid">
-                  <div class="well well-sm">
-                     <strong id="tide1" class="text-success fa-lg">Rau ăn lá</strong>
-                     <div class="btn-group">
-                        <a href="javascript:void(0)" id="list" class="btn btn-default btn-sm btn-tab">
-                        <span class="glyphicon glyphicon-th-list">
-                        </span>List
-                        </a>
-                        <a href="avascript:void(0)" id="grid" class="btn btn-default btn-sm btn-tab">
-                        <span class="glyphicon glyphicon-th"></span>Grid
-                        </a>
+            <section class="main_container collection col-lg-9 col-lg-push-3">
+               <div class="box-heading hidden relative">
+                  <h1 class="title-head margin-top-0"><?=$category->name?></h1>
+               </div>
+               <div class="category-products products">
+                  <div class="sortPagiBar">
+                     <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 text-xs-left text-sm-right">
+                           <div class="bg-white clearfix">
+                              <!-- <div id="sort-by">
+                                 <label class="left hidden-xs">Sắp xếp: </label>
+                                 <ul>
+                                    <li >
+                                       <span class="val">Mặc định</span>
+                                       <ul class="ul_2">
+                                          <li><a href="javascript:;" onclick="sortby('default')">Mặc định</a></li>
+                                          <li><a href="javascript:;" onclick="sortby('alpha-asc')">A &rarr; Z</a></li>
+                                          <li><a href="javascript:;" onclick="sortby('alpha-desc')">Z &rarr; A</a></li>
+                                          <li><a href="javascript:;" onclick="sortby('price-asc')">Giá tăng dần</a></li>
+                                          <li><a href="javascript:;" onclick="sortby('price-desc')">Giá giảm dần</a></li>
+                                          <li><a href="javascript:;" onclick="sortby('created-desc')">Hàng mới nhất</a></li>
+                                          <li><a href="javascript:;" onclick="sortby('created-asc')">Hàng cũ nhất</a></li>
+                                       </ul>
+                                    </li>
+                                 </ul>
+                              </div> -->
+                              <!-- <div class="view-mode f-left">				
+                                 <a href="javascript:;" data-view="grid" >
+                                 <b class="btn button-view-mode view-mode-grid active ">
+                                 <i class="fa fa-th" aria-hidden="true"></i>					
+                                 </b>
+                                 <span>Lưới</span>
+                                 </a>
+                                 <a href="javascript:;" data-view="list" onclick="switchView('list')">
+                                 <b class="btn button-view-mode view-mode-list ">
+                                 <i class="fa fa-th-list" aria-hidden="true"></i>
+                                 </b>
+                                 <span>Danh sách</span>
+                                 </a>
+                              </div> -->
+                           </div>
+                        </div>
                      </div>
                   </div>
-                  <div id="products">
-                  </div>
+                  <section class="products-view products-view-grid">
+                     <?php if(empty($datas)) { ?>
+                        <h2 class="title-head">Không có kết quả tìm kiếm phù hợp</h2>
+                    <?php } ?>
+                     <div class="row">
+                        <?php foreach($datas as $data) {?>
+                        <div class="col-xs-6 col-xss-6 col-sm-4 col-md-4 col-lg-4">
+                           <div class="product-box">
+                              <div class="product-thumbnail flexbox-grid">
+                                 <a href="/<?=$data['slug']?>" title="<?=$data['name']?>">
+                                 <img src="/<?=$data['image_url']?>7"  data-lazyload="/<?=$data['image_url']?>" alt="<?=$data['name']?>">
+                                 </a>	
+                              </div>
+                              <div class="product-info a-center">
+                                 <h3 class="product-name"><a href="/<?=$data['slug']?>" title="<?=$data['name']?>"><?=$data['name']?></a></h3>
+                                 <div class="price-box clearfix">
+                                    <div class="special-price">
+                                       <span class="price product-price"><?=number_format($data['price'])?>₫</span>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <?php } ?>
+                     </div>
+                     <?php if(!empty($datas)) {?>
+                     <div class="text-center">
+                        <nav>
+                           <ul class="pagination clearfix">
+                              <li class="page-item text hidden-xs" <?= ($page == 1) ? 'disabled' : '' ?>><a class="page-link" href="<?= $previousPageUrl ?? '#' ?>"><i class="fa fa-angle-left"></i></a></li>        
+                               <!-- Pages -->
+                              <?php foreach ($pagesToShow as $p): ?>
+                                    <?php if ($p === '...'): ?>
+                                       <li class="page-item">...</li>
+                                    <?php else: ?>
+                                       <li class="page-item <?= ($p == $page) ? 'active' : '' ?>"><a class="page-link" href="<?= pageUrlProduct($p, "") ?>"><?= $p ?></a></li>
+                                    <?php endif; ?>
+                              <?php endforeach; ?>
+                              <li class="page-item hidden-xs text" <?= ($page == 1) ? 'disabled' : '' ?>><a class="page-link" href="<?= $previousPageUrl ?? '#' ?>"><i class="fa fa-angle-right"></i></a></li>
+                           </ul>
+                        </nav>
+                     </div>
+                     <?php } ?>
+                  </section>
                </div>
-               <input type="hidden" value="<?=$category->id?>" id="category_id">
-               <script src="/assets/js/list_product.js"></script>
-               <style>
-                  .glyphicon {
-                  margin-right: 5px;
-                  }
-                  .page-number.active {
-                     background: #1184f0 !important; 
-                     color: #ffff !important; 
-                  }
-                  .thumbnail {
-                  margin-bottom: 20px;
-                  padding: 0px;
-                  -webkit-border-radius: 0px;
-                  -moz-border-radius: 0px;
-                  border-radius: 0px;
-                  }
-                  .item.list-group-item {
-                  float: none;
-                  width: 100%;
-                  background-color: #fff;
-                  margin-bottom: 10px;
-                  }
-                  .item.list-group-item:nth-of-type(odd):hover, .item.list-group-item:hover {
-                  background: #428bca;
-                  }
-                  .item.list-group-item .list-group-image {
-                  margin-right: 10px;
-                  }
-                  .item.list-group-item .thumbnail {
-                  margin-bottom: 0px;
-                  }
-                  .item.list-group-item .caption {
-                  padding: 9px 9px 0px 9px;
-                  }
-                  .item.list-group-item:nth-of-type(odd) {
-                  background: #eeeeee;
-                  }
-                  .item.list-group-item:before, .item.list-group-item:after {
-                  display: table;
-                  content: " ";
-                  }
-                  .item.list-group-item img {
-                  float: left;
-                  }
-                  .item.list-group-item:after {
-                  clear: both;
-                  }
-                  .list-group-item-text {
-                  margin: 0 0 11px;
-                  }
-               </style>
+            </section>
+            <?php $this->load->view('includes/aside')?>
+            <div id="open-filters" class="open-filters hidden-lg">
+               <i class="fa fa-align-right"></i>
+               <span>Lọc</span>
             </div>
-
          </div>
-      </div>
-      <!-- /.container -->
+      </div>	
       <?php $this->load->view('includes/footer')?>
-      <!-- /.container -->
+      <?php $this->load->view('includes/modal')?>
+      <!-- Modal Đăng nhập -->
+      <div class='jas-sale-pop flex pf middle-xs'></div>
+      <?php $this->load->view('includes/script')?>
    </body>
 </html>

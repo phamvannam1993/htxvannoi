@@ -60,6 +60,9 @@ class MProduct extends CI_Model {
         if(isset($params["category_id"]))  {
             $this->db->where("category_id", $params["category_id"]);
         }
+        if(isset($params["category_ids"]) && !empty($params["category_ids"]))  {
+            $this->db->where_in("category_id", $params["category_ids"]);
+        }
         $this->db->order_by('id', 'ASC');
         return $this->db->get()->result_array();
     }
@@ -80,6 +83,9 @@ class MProduct extends CI_Model {
         }
         if(isset($params["category_id"]))  {
             $query = $query->where("category_id", $params["category_id"]);
+        }
+        if(isset($params["category_ids"]) && !empty($params["category_ids"]))  {
+            $query = $query->where_in("category_id", $params["category_ids"]);
         }
         $query = $query->from($this->table);
         return $query->count_all_results();

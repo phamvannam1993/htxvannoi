@@ -13,7 +13,7 @@ class Category extends CI_Controller
     }
 
     public function form($id = 0) {
-        $data['title'] = 'Thêm mới category';
+        $data['title'] = 'Thêm mới danh mục';
         $data['text_button'] = 'Lưu';
         $data['content'] = '/admin/pages/template/form';
         $data['id'] = $id;
@@ -102,9 +102,9 @@ class Category extends CI_Controller
 
     public function index() {
         // is_admin();
-        $data['title'] = "Danh sách category";
+        $data['title'] = "Danh sách danh mục";
         $page = $this->input->get('page') ? $this->input->get('page') : 1; 
-        $perPage = $this->input->get('limit') ? $this->input->get('limit') : 10; // số mục mỗi trang
+        $perPage = $this->input->get('limit') ? $this->input->get('limit') : 20; // số mục mỗi trang
         $search = $this->input->get('search') ? $this->input->get('search') : ""; 
         $total = $this->MCategory->count_all(['search' => $search]); // tổng số mục
         $totalPage = ceil($total / $perPage);
@@ -169,7 +169,7 @@ class Category extends CI_Controller
     }
 
     public function listField() {
-        $items = $this->MCategory->listType();
+        $items = $this->MCategory->get(['parent_id' => 0]);
         return [
             [
                 'key' => 'id',
@@ -184,7 +184,7 @@ class Category extends CI_Controller
                 'name' => 'Url SEO'
             ],
             [
-                'key' => 'type',
+                'key' => 'parent_id',
                 'name' => 'Loại danh mục',
                 'type' => 'option',
                 'items' => $items
@@ -193,7 +193,7 @@ class Category extends CI_Controller
     }
 
     public function getForm($data) {
-        $items = $this->MCategory->listType();
+        $items = $this->MCategory->get(['parent_id' => 0]);
         return [
             [
                 'title' => 'Tên danh mục',
@@ -210,8 +210,8 @@ class Category extends CI_Controller
             ],
             [
                 'title' => 'Loại danh mục',
-                'field' => 'type',
-                'value' => isset($data['type']) ? $data['type'] : '',
+                'field' => 'parent_id',
+                'value' => isset($data['parent_id']) ? $data['parent_id'] : 0,
                 'required' => true,
                 'items' => $items,
                 'type' => 'option',

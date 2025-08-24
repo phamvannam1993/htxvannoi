@@ -43,7 +43,9 @@ class Product extends CI_Controller
                     $ext = 'png';
                 } elseif (strpos($type, 'image/gif') !== false) {
                     $ext = 'gif';
-                } 
+                } else {
+                    $ext = 'png';
+                }
                 $filename = uniqid() . '.' . $ext;
                 $filepath = 'assets/uploads/' . $filename;  // Đảm bảo thư mục 'writable/uploads/' tồn tại
                 file_put_contents($filepath, $dataImage);
@@ -91,7 +93,11 @@ class Product extends CI_Controller
     public function delete($id) {
         // is_admin();
         try {
+            $product = $this->MProduct->getOneByID($id);
             $this->MProduct->delete($id);
+            if(file_exists($product->image_url)) {
+                unlink($product->image_url);
+            }
             redirect('/admin/product');
         } catch(\Exception $ex) {
             echo json_encode(["success" => false, "message" => "Xóa thất bại"]);

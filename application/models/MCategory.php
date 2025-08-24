@@ -48,19 +48,19 @@ class MCategory extends CI_Model {
         return  $query->get()->row();
     }
 
-    public function get($params = []) {
+    public function get($params = [], $orderBy = 'DESC') {
         $this->db->select('*');
         $this->db->from($this->table);
         if(isset($params["limit"]) && isset($params["offset"]))  {
             $this->db->limit($params["limit"], $params["offset"]);
         }
-        if(isset($params["types"])) {
-            $this->db->where_in("type" , $params["types"]);
+        if(isset($params["parent_id"])) {
+            $this->db->where("parent_id" , $params["parent_id"]);
         }
         if(isset($params["search"]))  {
             $this->db->like("name", $params["search"]);
         }
-        $this->db->order_by('id', 'ASC');
+        $this->db->order_by('id', $orderBy);
         return $this->db->get()->result_array();
     }
     public function get_by($params) {

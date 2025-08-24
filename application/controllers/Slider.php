@@ -43,7 +43,9 @@ class Slider extends CI_Controller
                     $ext = 'png';
                 } elseif (strpos($type, 'image/gif') !== false) {
                     $ext = 'gif';
-                } 
+                } else {
+                    $ext = 'png';
+                }
                 $filename = uniqid() . '.' . $ext;
                 $filepath = 'assets/uploads/' . $filename;  // Đảm bảo thư mục 'writable/uploads/' tồn tại
                 file_put_contents($filepath, $dataImage);
@@ -208,7 +210,7 @@ class Slider extends CI_Controller
                 'title' => 'Mô tả',
                 'field' => 'description',
                 'value' => isset($data['description']) ? $data['description'] : '',
-                'required' => true,
+                'required' => false,
                 'type' => 'text'
             ]
         ];
